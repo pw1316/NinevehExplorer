@@ -1,6 +1,13 @@
+# IDE cache
 .idea/
+.vs/
 
+# visual studio
 *.user
 
+# build temp files
 [Bb]in/
 [Oo]bj/
+
+# files in project
+/nineveh/version/version.cc

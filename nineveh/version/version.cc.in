@@ -1,0 +1,5 @@
+#include "version.h"
+
+namespace nineveh {
+    const std::string kVersion = "VERSION: @NINEVEH_VERSION_STR@\n*********commit log*********\n@NINEVEH_COMMIT_STR@*********commit log*********";
+}
