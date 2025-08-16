@@ -1,0 +1,11 @@
+if(NOT PROJECT_SOURCE_DIR OR NOT PROJECT_VERSION)
+    message(FATAL_ERROR "Variable PROJECT_SOURCE_DIR and PROJECT_VERSION must be specified!!!")
+endif()
+
+find_package(Git)
+if(GIT_FOUND)
+    execute_process(COMMAND git -C ${PROJECT_SOURCE_DIR} log --pretty=format:${PROJECT_VERSION}-%h -n 1 OUTPUT_VARIABLE VERSION_STR_GEN)
+else()
+    set(VERSION_STR_GEN ${PROJECT_VERSION})
+endif()
+configure_file(${PROJECT_SOURCE_DIR}/src/version/version.cc.in ${PROJECT_SOURCE_DIR}/src/version/version.cc @ONLY NEWLINE_STYLE UNIX)

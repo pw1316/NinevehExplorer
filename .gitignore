@@ -10,4 +10,4 @@
 [Oo]bj/
 
 # files in project
-/nineveh/version/version.cc
+**/version/version.cc
