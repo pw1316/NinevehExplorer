@@ -1,7 +1,7 @@
 # 3.8 is the minimal version that supports c++17
 # 3.12 is PhysX's requirement
 # 3.15 is CMAKE_MSVC_RUNTIME_LIBRARY requirement
-cmake_minimum_required (VERSION 3.15)
+cmake_minimum_required(VERSION 3.15)
 set(CMAKE_CXX_STANDARD 17) # We need aligned new feature
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>$<$<NOT:$<CONFIG:Debug>>:DLL>") # MTd MD
 project(loaframework VERSION 0.0.1)
@@ -15,6 +15,7 @@ endif()
 
 # Global Include
 include_directories("${PROJECT_SOURCE_DIR}")
+
 # include_directories("${PROJECT_SOURCE_DIR}/include")
 # link_directories("${PROJECT_SOURCE_DIR}/lib")
 
@@ -29,6 +30,7 @@ add_custom_command(
 set(LOA_SRC
     src/version/version.cc
     src/core/ability_stone.cc
+    src/core/upgrade_calc.cc
 )
 list(APPEND LOA_SRC src/loaframework.cc)
 

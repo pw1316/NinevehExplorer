@@ -12,5 +12,6 @@
 #endif
 
 LOA_API void loa_version();
+LOA_API void loa_upgrade_calculator();
 
 #endif
