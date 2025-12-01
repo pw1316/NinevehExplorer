@@ -9,5 +9,5 @@ void loa_version() { std::cout << loaframework::kVersion << std::endl; }
 
 void loa_upgrade_calculator() {
     loaframework::core::UpgradeCalculator calculator;
-    calculator.Run(2, 50, 0);
+    calculator.Run(15, 63, 0);
 }

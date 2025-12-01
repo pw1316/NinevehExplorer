@@ -33,7 +33,7 @@ void UpgradeCalculator::Run(int fail_cnt, int extra_cnt, int book_cnt) {
     }
 }
 
-double UpgradeCalculator::_material_price() {
+double UpgradeCalculator::_material_price() const {
     return _cost_red_blue_stone * _red_blue_stone_price + _cost_silver * _silver_price +
            _cost_fragment * _fragment_price + _cost_break_stone * _break_stone_price + _cost_gold;
 }
@@ -44,7 +44,7 @@ double UpgradeCalculator::_total_price(int extra_cnt, int book_cnt) {
     return _material_price() + extra_price + book_price;
 }
 
-double UpgradeCalculator::_total_eta(int fail_cnt, int extra_cnt, int book_cnt) {
+double UpgradeCalculator::_total_eta(int fail_cnt, int extra_cnt, int book_cnt) const {
     auto multi = fail_cnt + 1.0 * extra_cnt / _max_extra_cnt + book_cnt;
     if (fail_cnt - 1 <= _max_fail_cnt) {
         multi += (fail_cnt - 1) * fail_cnt * 0.5 / _max_fail_cnt;
@@ -84,21 +84,22 @@ double UpgradeCalculator::_dp(int fail_cnt, int extra_cnt, int book_cnt) {
         return result;
     }
 
-    auto prop_fail = std::min(1.0 * fail_cnt / _max_fail_cnt, 1.0);
-
+    auto p_fail_multi = std::min(1.0 * fail_cnt / _max_fail_cnt, 1.0);
     result = std::numeric_limits<double>::max();
     int choice_extra = 0;
     int choice_book = 0;
     for (auto i = 0; i <= 1; ++i) {
-        if (i == 1 && _book_price > 999999999) {
+        if (i > 0 && !_use_book) {
             continue;
         }
         for (auto j = 0; j <= _max_extra_cnt; ++j) {
-            auto prop_extra = 1.0 * j / _max_extra_cnt + i;
-            auto prop = _init_prop * (1.0 + prop_fail + prop_extra);
-
+            if (j > 0 && !_use_extra) {
+                continue;
+            }
+            auto p_ex_multi = 1.0 * j / _max_extra_cnt + i;
+            auto probability = _init_prop * (1.0 + p_fail_multi + p_ex_multi);
             auto fail_price = _dp(fail_cnt + 1, extra_cnt + j, book_cnt + i);
-            auto cur_result = _total_price(j, i) + (1.0 - prop) * fail_price;
+            auto cur_result = _total_price(j, i) + (1.0 - probability) * fail_price;
             if (cur_result < result) {
                 result = cur_result;
                 choice_extra = j;

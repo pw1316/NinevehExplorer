@@ -26,20 +26,23 @@ class UpgradeCalculator {
     int _cost_break_stone = 56;
     int _cost_gold = 4870;
 
-    double _red_blue_stone_price = 0;  // 7
+    double _red_blue_stone_price = 0;
     double _silver_price = 0;
     double _fragment_price = 0;
     double _break_stone_price = 0;
 
-    double _extra_price = 1411;  // 1411
-    double _book_price = 9999999999;
+    bool _use_extra = true;
+    double _extra_price = 0;
+
+    bool _use_book = false;
+    double _book_price = 0;
 
     std::map<int, std::map<int, std::map<int, double>>> _cache;
     std::map<int, std::map<int, std::map<int, int>>> _choice;
 
-    double _material_price();
+    double _material_price() const;
     double _total_price(int extra_cnt, int book_cnt);
-    double _total_eta(int fail_cnt, int extra_cnt, int book_cnt);
+    double _total_eta(int fail_cnt, int extra_cnt, int book_cnt) const;
     bool _get_from_cache(int fail_cnt, int extra_cnt, int book_cnt, double& result);
     double _dp(int fail_cnt, int extra_cnt, int book_cnt);
 };
