@@ -46,6 +46,12 @@ double UpgradeCalculator::_total_price(int extra_cnt, int book_cnt) {
 
 double UpgradeCalculator::_total_eta(int fail_cnt, int extra_cnt, int book_cnt) {
     auto multi = fail_cnt + 1.0 * extra_cnt / _max_extra_cnt + book_cnt;
+    if (fail_cnt - 1 <= _max_fail_cnt) {
+        multi += (fail_cnt - 1) * fail_cnt * 0.5 / _max_fail_cnt;
+    } else {
+        multi += (_max_fail_cnt + 1) * _max_fail_cnt * 0.5 / _max_fail_cnt;
+        multi += fail_cnt - 1 - _max_fail_cnt;
+    }
     return _init_prop * _eta * multi;
 }
 
