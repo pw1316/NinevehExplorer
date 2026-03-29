@@ -1,0 +1,20 @@
+{
+  "name": "loadb_server",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js"
+  },
+  "author": "pw1316",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
