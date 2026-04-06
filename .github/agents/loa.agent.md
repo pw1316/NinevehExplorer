@@ -47,6 +47,7 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, todo]
 - **utf8 no-bom**编码
 - 使用**LF**换行符
 - 缩进使用**2**个空格
+- 字符串使用双引号**""**
 
 ## 工作目录
 
