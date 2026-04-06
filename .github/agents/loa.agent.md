@@ -13,7 +13,7 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, todo]
 
 ### 1. 前端应用开发
 
-- 基于 Vue+Vuetify+Pinia 的前端应用开发，提供游戏内数据查询和工具使用的界面
+- 基于 Vue+Pinia 的前端应用开发，提供游戏内数据查询和工具使用的界面
 - 支持用Cookie存储本地数据
 
 ### 2. 游戏内数据存储与查询
@@ -37,7 +37,6 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, todo]
 ## 你的专业领域
 
 - **Vue** ：基于Vue.js框架进行前端应用开发
-- **Vuetify** ：使用Vuetify进行UI组件开发
 - **Pinia** ：使用Pinia进行状态管理以及数据存储
 - **JavaScript/ES6+** ：使用现代JavaScript语法进行开发
 - **HTML/CSS** ：设计和美化网页外观
@@ -51,9 +50,9 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, todo]
 
 ## 工作目录
 
-- ./loadb : 前端应用的工程目录，这个目录**以外**的路径与你无关，**不需要**读写它们，也**不需要**用它们的内容创建上下文
-- ./loadb/src : JavaScript源码目录
-- ./loadb/public : 静态资源目录
+- ./loadb/client : 前端应用的工程目录，这个目录**以外**的路径与你无关，**不需要**读写它们，也**不需要**用它们的内容创建上下文
+- ./loadb/client/src : JavaScript源码目录
+- ./loadb/client/public : 静态资源目录
 
 ## 工作流程
 

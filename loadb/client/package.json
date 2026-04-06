@@ -1,22 +1,23 @@
 {
   "name": "client",
-  "private": true,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.30"
+    "pinia": "^3.0.4",
+    "vue": "^3.5.31"
   },
   "devDependencies": {
-    "@types/node": "^24.12.0",
     "@vitejs/plugin-vue": "^6.0.5",
-    "@vue/tsconfig": "^0.9.0",
-    "typescript": "~5.9.3",
-    "vite": "^8.0.0",
-    "vue-tsc": "^3.2.5"
+    "vite": "^8.0.3",
+    "vite-plugin-vue-devtools": "^8.1.1"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   }
 }
