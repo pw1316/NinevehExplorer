@@ -1,14 +1,24 @@
 <!DOCTYPE html>
-<html lang="">
+<html>
 
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" href="/favicon.ico">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width">
+  <link rel="stylesheet" href="/style/p9base100801.css">
+  <link rel="stylesheet" href="/style/p9icon111001.css">
+  <link rel="stylesheet" href="/style/layer111201.css">
+  <link rel="stylesheet" href="/style/global.css">
+  <link rel="shortcut icon" href="/favicon.ico">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vite App</title>
+  <title>LoaDB</title>
 </head>
 
-<body>
+<body class="bg">
+  <!-- 回到顶部按钮 -->
+  <div class="to_top" onclick="$('html, body').animate({ scrollTop: 0 }, 'slow');">
+    <div class="arrow"></div>
+    <div class="stick"></div>
+  </div>
   <div id="app"></div>
   <script type="module" src="/src/main.js"></script>
 </body>

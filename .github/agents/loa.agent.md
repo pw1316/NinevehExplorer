@@ -53,6 +53,7 @@ tools: [vscode, execute, read, agent, edit, search, web, browser, todo]
 
 - ./loadb/client : 前端应用的工程目录，这个目录**以外**的路径与你无关，**不需要**读写它们，也**不需要**用它们的内容创建上下文
 - ./loadb/client/src : JavaScript源码目录
+  - ./loadb/client/src/data : 数据存放目录，数据以**CSV**的格式存储，数据编号规范在数据目录下的**README.md**文件
 - ./loadb/client/public : 静态资源目录
 
 ## 工作流程
