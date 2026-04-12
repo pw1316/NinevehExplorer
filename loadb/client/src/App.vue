@@ -1,26 +1,6 @@
 <script setup>
-import { ref, reactive } from "vue";
-import DefaultComponent from "./components/Default.vue"
-
-const pages = reactive([
-  {
-    name: "一级标题1",
-    secondary: [
-      { name: "二级标题1-1", component: DefaultComponent },
-      { name: "二级标题1-1", component: DefaultComponent },
-    ]
-  },
-  {
-    name: "一级标题2",
-    secondary: [
-      { name: "二级标题2-1", component: DefaultComponent },
-      { name: "二级标题2-1", component: DefaultComponent },
-    ]
-  },
-]);
-
-const curFirstIdx = ref(0);
-const curSecondIdx = ref(0);
+import { usePageStore } from "./stores/pageStore.js"
+const pageStore = usePageStore()
 </script>
 
 <template>
@@ -28,8 +8,8 @@ const curSecondIdx = ref(0);
   <div class="header">
     <div class="inner">
       <ul class="ml64 inavdark">
-        <li v-for="(value, key) in pages" :key="key" @click="curFirstIdx = key; curSecondIdx = 0"
-          :class="{ current: curFirstIdx === key }">
+        <li v-for="(value, key) in pageStore.pages" :key="key" @click="pageStore.setFirstIndex(key)"
+          :class="{ current: pageStore.curFirstIdx === key }">
           <a href="javascript:void(0)">{{ value.name }}</a>
         </li>
       </ul>
@@ -41,16 +21,16 @@ const curSecondIdx = ref(0);
     <!-- 正文 -->
     <div class="main">
       <div class="box">
-        <component :is="pages[curFirstIdx].secondary[curSecondIdx].component"></component>
+        <component :is="pageStore.curComponent"></component>
       </div>
     </div>
 
     <!-- 侧边栏 -->
     <div class="side">
-      <div class="hd3">{{ pages[curFirstIdx].name }}</div>
+      <div class="hd3">{{ pageStore.curFirstName }}</div>
       <ul class="darklist pd10 inavdark">
-        <li v-for="(content, key) in pages[curFirstIdx].secondary" :key="key" @click="curSecondIdx = key"
-          :class="{ current: curSecondIdx === key }">
+        <li v-for="(content, key) in pageStore.curFirstChildren" :key="key" @click="pageStore.setSecondIndex(key)"
+          :class="{ current: pageStore.curSecondIdx === key }">
           <a href="javascript:void(0)">{{ content.name }}</a>
         </li>
       </ul>
