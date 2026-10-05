@@ -5,7 +5,7 @@ import { tmpdir } from 'os'
 import { getDataDir } from './dataDir'
 import { createIpcDispatcher } from './ipc'
 import { createAccountHandlers } from './services/accountHandlers'
-import { setupTray, shouldPreventClose, makeTrayIcon } from './tray'
+import { setupTray, shouldPreventClose, loadAppIcon } from './tray'
 
 // A packaged portable app is launched from wherever the user dropped the exe, so
 // the data directory may be unwritable (read-only medium, restricted share,
@@ -45,7 +45,7 @@ let tray: Tray | null = null
 function createWindow(): void {
   win = new BrowserWindow({
     width: 1100, height: 760, title: 'loadaily',
-    icon: makeTrayIcon(256),
+    icon: loadAppIcon(),
     webPreferences: { preload: join(__dirname, '../preload/index.js'), contextIsolation: true, nodeIntegration: false }
   })
   if (process.env.ELECTRON_RENDERER_URL) win.loadURL(process.env.ELECTRON_RENDERER_URL)

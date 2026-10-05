@@ -6,8 +6,9 @@
   "description": "LostArk 国服 日常/周常管理工具",
   "main": "out/main/index.js",
   "scripts": {
-    "start": "electron-vite dev",
-    "build": "electron-vite build && electron-builder",
+    "export:icon": "node scripts/run-electron.cjs",
+    "start": "npm run export:icon && electron-vite dev",
+    "build": "npm run export:icon && electron-vite build && electron-builder",
     "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
     "test": "vitest run",
     "test:watch": "vitest"

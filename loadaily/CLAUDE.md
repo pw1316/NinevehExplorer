@@ -23,19 +23,41 @@ loadaily 是《失落方舟》国服的日常/周常管理桌面工具。Electro
 
 ## 环境注意（本机 DSH/Codex 会话）
 
-- 若 shell 里存在 `ELECTRON_RUN_AS_NODE=1`，`npm start` 会崩溃并报
+- 若 shell 里存在 `ELECTRON_RUN_AS_NODE=1`，直接跑 `electron ...` 或 `npm start` 会崩溃并报
   `Cannot read properties of undefined (reading 'requestSingleInstanceLock')`：该变量会让 electron.exe 以纯 Node 模式运行，
-  `require('electron')` 只返回 exe 路径字符串而非 API。启动前清除即可：
-  `Remove-Item Env:ELECTRON_RUN_AS_NODE`。这不是应用缺陷。
+  `require('electron')` 只返回 exe 路径字符串而非 API。这不是应用缺陷。
+  `npm run export:icon` 已用 `scripts/run-electron.cjs` 在子进程里剔除该变量，不受影响；
+  `npm start` 仍受其影响，启动前清除即可：`Remove-Item Env:ELECTRON_RUN_AS_NODE`。
 
-## UI 规范
+## reference 机制（强约束）
 
-- 配色：背景 `#E5E9EF`、头部 `#333645`、主色 `#3890ff`、次要文字 `#6b7989`；
-  语义色：成功 `#5cb85c`、警告 `#f0ad4e`、错误 `#da314b`。
-- 字体 `"Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif`，圆角 `2px`，文案中文。
-- 禁止原生 `window.confirm` / `window.prompt`，使用 `ConfirmModal` / `PromptModal`。
-- 账号 tab 与远征队子 tab 的重命名/删除入口只出现在「当前选中项」上（`.tab.active .tab-act` / `.sub-tab.active .tab-act`），
-  避免两级文案重名造成选择器歧义。
+- `reference/` 存放**第三方公开素材**，是本项目 UI 风格与图标的唯一基准：
+  - `reference/p9/`：第三方公开 CSS（UI 风格基准）
+  - `reference/icon/lostark-emblem.png`：《失落方舟》官网图标源文件
+- **只读**：不得修改、不得直接 import / 打包进产物（产物用导出的副本）
+- 实现 UI / 改图标前，先对照 `reference/p9/p9base100801.css` 取色值与形态
+- 源码中**不要保留「参考自 reference/xxx」或出处类注释**：风格知识沉淀在 `reference/` 与本文档，代码只写行为
+
+## UI 风格规范（遵循 reference/p9，改 UI 前必读）
+
+界面风格以 `reference/p9/p9base100801.css` 为基准，**后续所有 UI/CSS 改动须遵循该风格**：
+
+- **配色**：页面背景蓝灰 `#E5E9EF`；头部深色 `#333645`；主色/按钮 `#3890ff`；强调链接 `#3498db`；次要文字 `#6b7989`；卡片白底 + 细阴影、圆角 2px
+- **语义色**（勿与主色混淆）：成功绿 `#5cb85c`、警告橙 `#f0ad4e`、错误红 `#da314b`
+- **表格**：表头灰 `#B8C4CE`、行分隔 `#F3F3F3`、行 hover `#FAF8F0`
+- **字体**：`"Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif`
+- **通用**：输入框灰底 `#F7F7F7` 无边框圆角；文案中文
+- 这些色值同时以 CSS 变量定义在 `src/renderer/src/styles.css` 的 `:root`，改样式优先用变量
+- 新增组件 / 改样式时对照参考文件取色值与形态；**不在源码注释中提及参考出处**
+
+## 图标（reference/icon → out/main）
+
+- 图标源 `reference/icon/lostark-emblem.png`（只读）；`npm run export:icon` 导出两份产物：
+  - `out/main/app-icon.png`（256×256，窗口 + 打包 exe）
+  - `out/main/tray-icon.png`（16×16，托盘）
+- 产物与主进程 bundle 同目录，`tray.ts` 用 `join(__dirname, ...)` 读取，dev 与 asar 打包路径一致
+- `npm start` / `npm test` / `npm run build` 都会先自动跑一次 `export:icon`；图标源更新后重跑即可
+- 图标缺失或损坏只会退化成空图标，不会让启动失败（`trayParts.ts` 的防御性解码有单测）
 
 ## 设计决策（勿擅自变更）
 
@@ -44,3 +66,4 @@ loadaily 是《失落方舟》国服的日常/周常管理桌面工具。Electro
 - 数据落应用自身目录，不落系统 user 目录。
 - id 由主进程生成且全局唯一（`` `${Date.now()}-${随机串}` ``）。
 - 删除确认一律走自定义弹窗。
+- 窗口图标、托盘图标、打包 exe 图标同源（都来自 `reference/icon/` 的导出产物）。

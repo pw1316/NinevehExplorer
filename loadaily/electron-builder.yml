@@ -1,5 +1,10 @@
 appId: com.pw1316.loadaily
 productName: loadaily
+# 只打包构建产物：reference/ 是只读风格基准（约定不进产物），dev 跑出的
+# loadaily_Data/ 等本地文件也不应混进安装包。
+files:
+  - out/**/*
+  - package.json
 win:
   target: portable
   icon: build/icon.png

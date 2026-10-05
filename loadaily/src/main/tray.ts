@@ -1,27 +1,38 @@
 import { app, Tray, Menu, nativeImage, type BrowserWindow } from 'electron'
+import { join } from 'path'
+import { existsSync, readFileSync } from 'fs'
+import { imageFromPngBytes } from './trayParts'
 
 export function shouldPreventClose(isQuitting: boolean): boolean {
   return !isQuitting
 }
 
-export function makeTrayIcon(size = 16): Electron.NativeImage {
-  const buf = Buffer.alloc(size * size * 4) // BGRA
-  const corner = size * 0.375
-  for (let y = 0; y < size; y++) {
-    for (let x = 0; x < size; x++) {
-      const i = (y * size + x) * 4
-      const isCorner = x < corner && y < corner
-      buf[i] = isCorner ? 0xff : 0xff       // B
-      buf[i + 1] = isCorner ? 0xff : 0x90   // G
-      buf[i + 2] = isCorner ? 0xff : 0x38   // R
-      buf[i + 3] = 0xff                     // A
-    }
+/** Packaged icons live next to the bundled main entry, so dev and asar agree on one path. */
+function iconPath(file: string): string {
+  return join(__dirname, file)
+}
+
+export function loadAppIcon(): Electron.NativeImage {
+  return imageFromPngBytes(nativeImage, readIconBytes('app-icon.png'), img => img.isEmpty())
+}
+
+export function loadTrayIcon(): Electron.NativeImage {
+  return imageFromPngBytes(nativeImage, readIconBytes('tray-icon.png'), img => img.isEmpty())
+}
+
+/** Reading bytes first (rather than createFromPath) keeps a missing icon from throwing. */
+function readIconBytes(file: string): Buffer | null {
+  const path = iconPath(file)
+  if (!existsSync(path)) return null
+  try {
+    return readFileSync(path)
+  } catch {
+    return null
   }
-  return nativeImage.createFromBitmap(buf, { width: size, height: size })
 }
 
 export function setupTray(getWindow: () => BrowserWindow | null): Tray {
-  const tray = new Tray(makeTrayIcon())
+  const tray = new Tray(loadTrayIcon())
   tray.setToolTip('loadaily')
   const showWindow = (): void => {
     const win = getWindow()

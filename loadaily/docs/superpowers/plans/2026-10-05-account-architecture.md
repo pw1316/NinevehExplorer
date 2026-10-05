@@ -8,7 +8,7 @@
 
 **Goal:** 搭起 loadaily 的 Electron 骨架，并实现「账号 → 远征队 → 角色」三级的增删改、持久化与 UI 展示。
 
-**Architecture:** 沿用参考项目（`E:\Repository\pw1316\memmonitor`）的三层架构：主进程服务层（纯函数 store + 原子写文件）→ 类型化 IPC（`ipc.ts` 分发 + `preload` contextBridge）→ React 渲染层（只做 UI）。业务数据是一棵 `Account[]` 树，所有改动走纯函数算出新树，再原子写盘，IPC 统一返回整棵树。
+**Architecture:** 沿用本项目既定的三层架构：主进程服务层（纯函数 store + 原子写文件）→ 类型化 IPC（`ipc.ts` 分发 + `preload` contextBridge）→ React 渲染层（只做 UI）。业务数据是一棵 `Account[]` 树，所有改动走纯函数算出新树，再原子写盘，IPC 统一返回整棵树。
 
 **Tech Stack:** Electron 31 + electron-vite 2 + TypeScript 5 + React 18 + Vite 5 + Vitest 2 + electron-builder 26。
 
