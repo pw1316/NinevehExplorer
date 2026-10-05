@@ -1,0 +1,13 @@
+:root {
+  --bg: #E5E9EF; --header: #333645; --primary: #3890ff; --link: #3498db;
+  --text: #333; --text-secondary: #6b7989; --th: #B8C4CE;
+  --row-sep: #F3F3F3; --row-hover: #FAF8F0; --input-bg: #F7F7F7;
+  --ok: #5cb85c; --warn: #f0ad4e; --err: #da314b; --radius: 2px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Helvetica Neue", "Luxi Sans", "DejaVu Sans", Tahoma, "Hiragino Sans GB", "Microsoft Yahei", sans-serif;
+  background: var(--bg); color: var(--text); font-size: 13px;
+}
+.app-shell { display: flex; flex-direction: column; height: 100vh; }
+.app-header { background: var(--header); color: #fff; padding: 8px 14px; font-weight: 600; }

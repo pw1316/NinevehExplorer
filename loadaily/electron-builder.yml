@@ -1,0 +1,5 @@
+appId: com.pw1316.loadaily
+productName: loadaily
+win:
+  target: portable
+  icon: build/icon.png
