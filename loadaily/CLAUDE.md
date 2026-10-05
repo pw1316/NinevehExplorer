@@ -52,12 +52,24 @@ loadaily 是《失落方舟》国服的日常/周常管理桌面工具。Electro
 
 ## 图标（reference/icon → out/main）
 
-- 图标源 `reference/icon/lostark-emblem.png`（只读）；`npm run export:icon` 导出两份产物：
-  - `out/main/app-icon.png`（256×256，窗口 + 打包 exe）
-  - `out/main/tray-icon.png`（16×16，托盘）
-- 产物与主进程 bundle 同目录，`tray.ts` 用 `join(__dirname, ...)` 读取，dev 与 asar 打包路径一致
-- `npm start` / `npm test` / `npm run build` 都会先自动跑一次 `export:icon`；图标源更新后重跑即可
+- 图标源 `reference/icon/lostark-emblem.png`（只读）；`npm run export:icon` 导出三份产物：
+  - `src/main/assets/app-icon.png`（256×256，窗口）与 `src/main/assets/tray-icon.png`（16×16，托盘）
+  - `build/icon.png`（256×256，打包 exe 图标，electron-builder 读取）
+- `src/main/assets/` 是 gitignore 的生成物；`electron.vite.config.ts` 的 copy 插件在 bundle 生成后把它复制到
+  `out/main/`（`electron-vite build` 会清空 out/，所以不能直接导出到 out/）。`tray.ts` 用 `join(__dirname, ...)`
+  读取，dev 与 asar 打包路径一致
+- `npm start` / `npm run build` 会先自动跑 `export:icon`；图标源更新后重跑即可
 - 图标缺失或损坏只会退化成空图标，不会让启动失败（`trayParts.ts` 的防御性解码有单测）
+
+## 交互规范（改 tab / 角色卡前必读）
+
+- 新增（账号 / 远征队 / 角色）先弹 `PromptModal` 填名字；**重命名不弹窗**，一律原地编辑。
+- 重命名/删除入口只出现在「当前选中项」上，避免两级文案重名造成选择器歧义：
+  - 未选中 tab：点击仅选中；无 hover 提示、不可编辑
+  - 已选中 tab：文本 hover 有底色（`--row-hover`）+ `cursor:text`，点文本原地变输入框；失焦 / 点其它区域 / `Enter` 提交，`Esc` 取消
+  - 已选中 tab 上的删除是垃圾桶小图标（`.icon-btn` + `TrashIcon`），不用「删除」文字
+- 角色卡首行是「名字 + 垃圾桶」同一行：名字 `flex:1 1 auto; min-width:0` 吃掉剩余宽度、过长省略号；垃圾桶 `flex:0 0 auto` 右对齐。
+- 编辑中切走（点了别的 tab）→ 输入框收起且**不提交**，避免误改。
 
 ## 设计决策（勿擅自变更）
 

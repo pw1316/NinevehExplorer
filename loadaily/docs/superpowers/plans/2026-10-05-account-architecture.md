@@ -1,10 +1,15 @@
 # loadaily 账号架构 Implementation Plan
 
 > **状态：全部 11 个 Task 已实现并验证**（分支 `feature/loadaily-account`）。
-> `npm test` 48/48 通过、`npm run typecheck` 双工程通过、`npm run build` 可产出 portable exe。
+> `npm test` 通过、`npm run typecheck` 双工程通过、`npm run build` 可产出 portable exe。
 > 下方 `- [x]` 表示该步骤已完成。
 
 > 执行方式：inline（executing-plans）。执行记录（含 4 条 Ruling 与最终 review 修复）见仓库外的 SDD ledger。
+
+> **后续修订（已实现，与本计划文本不一致处以此为准）**：账号 / 远征队**重命名不再走 `PromptModal`**，
+> 改为在「当前选中 tab」的文本上原地编辑（未选中点击仅选中、无 hover 提示；选中后文本有 hover 与 `cursor:text`，
+> 点击变输入框，失焦 / 点其它区域 / `Enter` 提交，`Esc` 取消），删除改为垃圾桶小图标；角色卡首行为「名字 + 垃圾桶」同一行。
+> 详见 `CLAUDE.md` 的「交互规范」一节。
 
 **Goal:** 搭起 loadaily 的 Electron 骨架，并实现「账号 → 远征队 → 角色」三级的增删改、持久化与 UI 展示。
 
