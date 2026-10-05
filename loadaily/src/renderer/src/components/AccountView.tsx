@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import type { Account, Roster } from '../../../main/services/accountStore'
 import type { Mutate } from '../App'
+import CharacterCard from './CharacterCard'
 import ConfirmModal from './ConfirmModal'
 import PromptModal from './PromptModal'
 
@@ -15,6 +16,7 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
   const [renamingRoster, setRenamingRoster] = useState<Roster | null>(null)
   const [removingRoster, setRemovingRoster] = useState<Roster | null>(null)
   const [removingCharacterId, setRemovingCharacterId] = useState<string | null>(null)
+  const [addingCharacter, setAddingCharacter] = useState(false)
 
   const activeRoster = account.rosters.find(r => r.id === activeRosterId) ?? account.rosters[0] ?? null
   const removingCharacter = activeRoster?.characters.find(c => c.id === removingCharacterId) ?? null
@@ -55,7 +57,20 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
           <div className="card-head">
             <h3>{activeRoster.name}</h3>
           </div>
-          <div className="hint">角色卡区在后续任务实现。</div>
+          <div className="char-row">
+            {activeRoster.characters.map(c => (
+              <CharacterCard
+                key={c.id}
+                character={c}
+                onRename={name => { void run(() => window.api.accounts.updateCharacter(c.id, { name })) }}
+                onItemLevel={itemLevel => { void run(() => window.api.accounts.updateCharacter(c.id, { itemLevel })) }}
+                onRemove={() => setRemovingCharacterId(c.id)}
+              />
+            ))}
+            <div className="char-card">
+              <button className="btn" onClick={() => setAddingCharacter(true)}>＋ 新增角色</button>
+            </div>
+          </div>
         </div>
       ) : (
         <div className="empty-hint">该账号还没有远征队，点击上方「＋」新增远征队。</div>
@@ -108,6 +123,19 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
           if (target) void run(() => window.api.accounts.removeCharacter(target.id))
         }}
         onCancel={() => setRemovingCharacterId(null)}
+      />
+
+      <PromptModal
+        open={addingCharacter}
+        title="新增角色"
+        label="角色名字"
+        placeholder="例如：法师"
+        onSubmit={value => {
+          const target = activeRoster
+          setAddingCharacter(false)
+          if (target) void run(() => window.api.accounts.addCharacter(target.id, value, 0))
+        }}
+        onCancel={() => setAddingCharacter(false)}
       />
     </>
   )
