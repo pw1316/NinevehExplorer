@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react'
 import type { Account } from '../../main/services/accountStore'
 import AccountView from './components/AccountView'
 import ConfirmModal from './components/ConfirmModal'
+import InlineEdit from './components/InlineEdit'
 import PromptModal from './components/PromptModal'
+import TrashIcon from './components/TrashIcon'
 import { readableError } from './errors'
 
 export type Mutate = (op: () => Promise<Account[]>) => Promise<Account[] | null>
@@ -13,7 +15,6 @@ export default function App(): JSX.Element {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [addingAccount, setAddingAccount] = useState(false)
-  const [renamingAccount, setRenamingAccount] = useState<Account | null>(null)
   const [removingAccount, setRemovingAccount] = useState<Account | null>(null)
 
   const run: Mutate = useCallback(async (op) => {
@@ -52,31 +53,33 @@ export default function App(): JSX.Element {
       ) : null}
 
       <nav className="tab-bar">
-        {accounts.map(a => (
-          <span
-            key={a.id}
-            className={`tab${activeAccount?.id === a.id ? ' active' : ''}`}
-            onClick={() => setActiveAccountId(a.id)}
-            onDoubleClick={() => setRenamingAccount(a)}
-            title="双击重命名"
-          >
-            <span className="tab-label">{a.name}</span>
-            {activeAccount?.id === a.id ? (
-              <span className="tab-actions">
-                <button
-                  className="btn link tab-act"
-                  title="重命名账号"
-                  onClick={e => { e.stopPropagation(); setRenamingAccount(a) }}
-                >重命名</button>
-                <button
-                  className="btn link err tab-act"
-                  title="删除账号"
-                  onClick={e => { e.stopPropagation(); setRemovingAccount(a) }}
-                >删除</button>
-              </span>
-            ) : null}
-          </span>
-        ))}
+        {accounts.map(a => {
+          const isActive = activeAccount?.id === a.id
+          return (
+            <span
+              key={a.id}
+              className={`tab${isActive ? ' active' : ''}`}
+              onClick={() => setActiveAccountId(a.id)}
+            >
+              <InlineEdit
+                className="tab-label"
+                value={a.name}
+                editable={isActive}
+                onSelect={() => setActiveAccountId(a.id)}
+                onSubmit={name => { void run(() => window.api.accounts.renameAccount(a.id, name)) }}
+              />
+              {isActive ? (
+                <span className="tab-actions">
+                  <button
+                    className="icon-btn tab-act"
+                    title="删除账号"
+                    onClick={e => { e.stopPropagation(); setRemovingAccount(a) }}
+                  ><TrashIcon /></button>
+                </span>
+              ) : null}
+            </span>
+          )
+        })}
         <button className="tab-add" onClick={() => setAddingAccount(true)} title="新增账号">＋</button>
       </nav>
 
@@ -103,19 +106,6 @@ export default function App(): JSX.Element {
           })
         }}
         onCancel={() => setAddingAccount(false)}
-      />
-
-      <PromptModal
-        open={renamingAccount !== null}
-        title="重命名账号"
-        label="账号名字"
-        defaultValue={renamingAccount?.name ?? ''}
-        onSubmit={value => {
-          const target = renamingAccount
-          setRenamingAccount(null)
-          if (target) void run(() => window.api.accounts.renameAccount(target.id, value))
-        }}
-        onCancel={() => setRenamingAccount(null)}
       />
 
       <ConfirmModal

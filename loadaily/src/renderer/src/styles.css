@@ -19,11 +19,18 @@ body {
 .tab { background: transparent; border: none; padding: 6px 16px; cursor: pointer; color: var(--text-secondary); font-size: 13px; font-weight: 600; border-radius: var(--radius) var(--radius) 0 0; display: inline-flex; align-items: center; gap: 4px; }
 .tab.active { background: var(--bg); color: var(--primary); }
 .tab-label { white-space: nowrap; }
+/* 只有选中项的文本可原地编辑，hover 提示也只给选中项，避免暗示未选中项可点即改 */
+.tab.active .tab-label { padding: 1px 3px; border-radius: var(--radius); cursor: text; }
+.tab.active .tab-label:hover { background: var(--row-hover); }
 .tab-actions { display: inline-flex; align-items: center; gap: 2px; }
-.tab-act { font-size: 11px; padding: 1px 3px; }
+.tab-act { padding: 1px 2px; }
 .tab-add { background: transparent; border: none; padding: 6px 10px; cursor: pointer; color: var(--text-secondary); font-size: 14px; font-weight: 700; }
 .sub-tab { background: transparent; border: none; padding: 4px 12px; cursor: pointer; color: var(--text-secondary); font-size: 13px; border-radius: var(--radius); display: inline-flex; align-items: center; gap: 4px; }
 .sub-tab.active { background: #fff; color: var(--primary); font-weight: 600; }
+.sub-tab.active .tab-label { padding: 1px 3px; border-radius: var(--radius); cursor: text; }
+.sub-tab.active .tab-label:hover { background: var(--row-hover); }
+.icon-btn { background: transparent; border: none; padding: 0; cursor: pointer; color: var(--err); display: inline-flex; align-items: center; justify-content: center; border-radius: var(--radius); line-height: 1; }
+.icon-btn:hover { background: rgba(218, 49, 75, .12); }
 .tab-body { flex: 1; padding: 12px; overflow: auto; display: flex; flex-direction: column; min-height: 0; gap: 10px; }
 .card { background: #fff; border-radius: var(--radius); padding: 10px 12px; box-shadow: 0 0 3px rgba(0,0,0,.1); }
 .card-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -39,11 +46,13 @@ body {
 .input { background: var(--input-bg); border: none; border-radius: var(--radius); padding: 5px 8px; font-family: inherit; font-size: 13px; }
 .char-row { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; }
 .char-card { flex: 0 0 auto; width: 170px; background: #fff; border-radius: var(--radius); box-shadow: 0 0 3px rgba(0,0,0,.1); padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-.char-name { font-size: 14px; font-weight: 600; cursor: text; min-height: 20px; }
+/* 角色卡首行：名字吃掉剩余宽度，垃圾桶贴右；min-width:0 是让省略号生效的关键 */
+.char-head { display: flex; align-items: center; gap: 6px; }
+.char-name { flex: 1 1 auto; min-width: 0; font-size: 14px; font-weight: 600; cursor: text; min-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.char-remove { flex: 0 0 auto; width: 18px; height: 18px; }
 .char-field { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
 .char-field label { font-size: 12px; color: var(--text-secondary); }
 .char-ilvl { width: 84px; text-align: right; }
-.char-actions { display: flex; justify-content: flex-end; }
 .inline-edit-input { width: 100%; }
 .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.35); display: flex; align-items: center; justify-content: center; z-index: 100; }
 .modal-card { background: #fff; border-radius: var(--radius); padding: 14px 16px; min-width: 300px; max-width: 420px; box-shadow: 0 2px 12px rgba(0,0,0,.25); }

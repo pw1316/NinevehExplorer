@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import type { Character } from '../../../main/services/accountStore'
 import InlineEdit from './InlineEdit'
+import TrashIcon from './TrashIcon'
 
 interface CharacterCardProps {
   character: Character
@@ -27,7 +28,12 @@ export default function CharacterCard({ character, onRename, onItemLevel, onRemo
 
   return (
     <div className="char-card" data-character-id={character.id}>
-      <InlineEdit className="char-name" value={character.name} onSubmit={onRename} placeholder="未命名角色" />
+      <div className="char-head">
+        <InlineEdit className="char-name" value={character.name} onSubmit={onRename} placeholder="未命名角色" />
+        <button className="icon-btn char-remove" title="删除角色" onClick={onRemove}>
+          <TrashIcon />
+        </button>
+      </div>
       <div className="char-field">
         <label>装备等级</label>
         <input
@@ -43,9 +49,6 @@ export default function CharacterCard({ character, onRename, onItemLevel, onRemo
         />
       </div>
       {ilvlError ? <div className="err">{ilvlError}</div> : null}
-      <div className="char-actions">
-        <button className="btn link err" onClick={onRemove}>删除</button>
-      </div>
     </div>
   )
 }

@@ -3,7 +3,9 @@ import type { Account, Roster } from '../../../main/services/accountStore'
 import type { Mutate } from '../App'
 import CharacterCard from './CharacterCard'
 import ConfirmModal from './ConfirmModal'
+import InlineEdit from './InlineEdit'
 import PromptModal from './PromptModal'
+import TrashIcon from './TrashIcon'
 
 interface AccountViewProps {
   account: Account
@@ -13,7 +15,6 @@ interface AccountViewProps {
 export default function AccountView({ account, run }: AccountViewProps): JSX.Element {
   const [activeRosterId, setActiveRosterId] = useState<string | null>(null)
   const [addingRoster, setAddingRoster] = useState(false)
-  const [renamingRoster, setRenamingRoster] = useState<Roster | null>(null)
   const [removingRoster, setRemovingRoster] = useState<Roster | null>(null)
   const [removingCharacterId, setRemovingCharacterId] = useState<string | null>(null)
   const [addingCharacter, setAddingCharacter] = useState(false)
@@ -35,31 +36,33 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
   return (
     <>
       <div className="sub-tab-bar">
-        {account.rosters.map(r => (
-          <span
-            key={r.id}
-            className={`sub-tab${activeRoster?.id === r.id ? ' active' : ''}`}
-            onClick={() => setActiveRosterId(r.id)}
-            onDoubleClick={() => setRenamingRoster(r)}
-            title="双击重命名"
-          >
-            <span className="tab-label">{r.name}</span>
-            {activeRoster?.id === r.id ? (
-              <span className="tab-actions">
-                <button
-                  className="btn link tab-act"
-                  title="重命名远征队"
-                  onClick={e => { e.stopPropagation(); setRenamingRoster(r) }}
-                >重命名</button>
-                <button
-                  className="btn link err tab-act"
-                  title="删除远征队"
-                  onClick={e => { e.stopPropagation(); setRemovingRoster(r) }}
-                >删除</button>
-              </span>
-            ) : null}
-          </span>
-        ))}
+        {account.rosters.map(r => {
+          const isActive = activeRoster?.id === r.id
+          return (
+            <span
+              key={r.id}
+              className={`sub-tab${isActive ? ' active' : ''}`}
+              onClick={() => setActiveRosterId(r.id)}
+            >
+              <InlineEdit
+                className="tab-label"
+                value={r.name}
+                editable={isActive}
+                onSelect={() => setActiveRosterId(r.id)}
+                onSubmit={name => { void run(() => window.api.accounts.renameRoster(r.id, name)) }}
+              />
+              {isActive ? (
+                <span className="tab-actions">
+                  <button
+                    className="icon-btn tab-act"
+                    title="删除远征队"
+                    onClick={e => { e.stopPropagation(); setRemovingRoster(r) }}
+                  ><TrashIcon /></button>
+                </span>
+              ) : null}
+            </span>
+          )
+        })}
         <button className="tab-add" onClick={() => setAddingRoster(true)} title="新增远征队">＋</button>
       </div>
 
@@ -101,19 +104,6 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
           })
         }}
         onCancel={() => setAddingRoster(false)}
-      />
-
-      <PromptModal
-        open={renamingRoster !== null}
-        title="重命名远征队"
-        label="远征队名字"
-        defaultValue={renamingRoster?.name ?? ''}
-        onSubmit={value => {
-          const target = renamingRoster
-          setRenamingRoster(null)
-          if (target) void run(() => window.api.accounts.renameRoster(target.id, value))
-        }}
-        onCancel={() => setRenamingRoster(null)}
       />
 
       <ConfirmModal
