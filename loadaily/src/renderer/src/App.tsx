@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { Account } from '../../main/services/accountStore'
+import AccountView from './components/AccountView'
 import ConfirmModal from './components/ConfirmModal'
 import PromptModal from './components/PromptModal'
 
@@ -43,15 +44,29 @@ export default function App(): JSX.Element {
 
       <nav className="tab-bar">
         {accounts.map(a => (
-          <button
+          <span
             key={a.id}
             className={`tab${activeAccount?.id === a.id ? ' active' : ''}`}
             onClick={() => setActiveAccountId(a.id)}
             onDoubleClick={() => setRenamingAccount(a)}
             title="双击重命名"
           >
-            {a.name}
-          </button>
+            <span className="tab-label">{a.name}</span>
+            {activeAccount?.id === a.id ? (
+              <span className="tab-actions">
+                <button
+                  className="btn link tab-act"
+                  title="重命名账号"
+                  onClick={e => { e.stopPropagation(); setRenamingAccount(a) }}
+                >重命名</button>
+                <button
+                  className="btn link err tab-act"
+                  title="删除账号"
+                  onClick={e => { e.stopPropagation(); setRemovingAccount(a) }}
+                >删除</button>
+              </span>
+            ) : null}
+          </span>
         ))}
         <button className="tab-add" onClick={() => setAddingAccount(true)} title="新增账号">＋</button>
       </nav>
@@ -62,16 +77,7 @@ export default function App(): JSX.Element {
         ) : !activeAccount ? (
           <div className="empty-hint">还没有账号，点击上方「＋」新增账号。</div>
         ) : (
-          <div className="card">
-            <div className="card-head">
-              <h3>{activeAccount.name}</h3>
-              <div>
-                <button className="btn link" onClick={() => setRenamingAccount(activeAccount)}>重命名</button>
-                <button className="btn link err" onClick={() => setRemovingAccount(activeAccount)}>删除</button>
-              </div>
-            </div>
-            <div className="hint">远征队与角色区在后续任务实现。</div>
-          </div>
+          <AccountView key={activeAccount.id} account={activeAccount} run={run} />
         )}
       </main>
 
