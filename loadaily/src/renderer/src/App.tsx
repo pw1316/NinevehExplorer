@@ -3,8 +3,9 @@ import type { Account } from '../../main/services/accountStore'
 import AccountView from './components/AccountView'
 import ConfirmModal from './components/ConfirmModal'
 import PromptModal from './components/PromptModal'
+import { readableError } from './errors'
 
-export type Mutate = (op: () => Promise<Account[]>) => Promise<void>
+export type Mutate = (op: () => Promise<Account[]>) => Promise<Account[] | null>
 
 export default function App(): JSX.Element {
   const [accounts, setAccounts] = useState<Account[]>([])
@@ -17,17 +18,20 @@ export default function App(): JSX.Element {
 
   const run: Mutate = useCallback(async (op) => {
     try {
-      setAccounts(await op())
+      const next = await op()
+      setAccounts(next)
       setError(null)
+      return next
     } catch (e) {
-      setError(e instanceof Error ? e.message : String(e))
+      setError(readableError(e))
+      return null
     }
   }, [])
 
   useEffect(() => {
     window.api.accounts.list()
       .then(list => { setAccounts(list); setError(null) })
-      .catch(e => setError(e instanceof Error ? e.message : String(e)))
+      .catch(e => setError(readableError(e)))
       .finally(() => setLoading(false))
   }, [])
 
@@ -40,7 +44,12 @@ export default function App(): JSX.Element {
         <span className="hint">{accounts.length} 个账号</span>
       </header>
 
-      {error ? <div className="app-error">{error}</div> : null}
+      {error ? (
+        <div className="app-error">
+          <span>{error}</span>
+          <button className="app-error-close" title="关闭提示" onClick={() => setError(null)}>×</button>
+        </div>
+      ) : null}
 
       <nav className="tab-bar">
         {accounts.map(a => (
@@ -88,7 +97,10 @@ export default function App(): JSX.Element {
         placeholder="例如：主账号"
         onSubmit={value => {
           setAddingAccount(false)
-          void run(() => window.api.accounts.addAccount(value))
+          void run(() => window.api.accounts.addAccount(value)).then(next => {
+            // 选中刚建好的账号，否则新建后界面看起来毫无变化
+            if (next && next.length > 0) setActiveAccountId(next[next.length - 1].id)
+          })
         }}
         onCancel={() => setAddingAccount(false)}
       />

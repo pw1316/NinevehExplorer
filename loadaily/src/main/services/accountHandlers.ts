@@ -1,5 +1,5 @@
 import type { IpcHandler } from '../ipc'
-import { loadAccounts, saveAccounts } from './accountsFile'
+import { loadAccounts, saveAccounts, type CorruptInfo } from './accountsFile'
 import {
   addAccount, renameAccount, removeAccount,
   addRoster, renameRoster, removeRoster,
@@ -7,8 +7,11 @@ import {
   type Account
 } from './accountStore'
 
-export function createAccountHandlers(file: string): Record<string, IpcHandler> {
-  let tree: Account[] = loadAccounts(file)
+export function createAccountHandlers(
+  file: string,
+  onCorrupt?: (info: CorruptInfo) => void
+): Record<string, IpcHandler> {
+  let tree: Account[] = loadAccounts(file, onCorrupt)
 
   const persist = (next: Account[]): Account[] => {
     saveAccounts(file, next)

@@ -26,7 +26,7 @@ export default function CharacterCard({ character, onRename, onItemLevel, onRemo
   }
 
   return (
-    <div className="char-card">
+    <div className="char-card" data-character-id={character.id}>
       <InlineEdit className="char-name" value={character.name} onSubmit={onRename} placeholder="未命名角色" />
       <div className="char-field">
         <label>装备等级</label>

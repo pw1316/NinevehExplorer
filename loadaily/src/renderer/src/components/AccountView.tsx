@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { Account, Roster } from '../../../main/services/accountStore'
 import type { Mutate } from '../App'
 import CharacterCard from './CharacterCard'
@@ -17,9 +17,20 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
   const [removingRoster, setRemovingRoster] = useState<Roster | null>(null)
   const [removingCharacterId, setRemovingCharacterId] = useState<string | null>(null)
   const [addingCharacter, setAddingCharacter] = useState(false)
+  const [focusCharacterId, setFocusCharacterId] = useState<string | null>(null)
+  const charRowRef = useRef<HTMLDivElement>(null)
 
   const activeRoster = account.rosters.find(r => r.id === activeRosterId) ?? account.rosters[0] ?? null
   const removingCharacter = activeRoster?.characters.find(c => c.id === removingCharacterId) ?? null
+
+  // A new card lands at the end of a horizontally scrolling row, so without this
+  // it can be created off-screen and look like nothing happened.
+  useEffect(() => {
+    if (!focusCharacterId) return
+    const el = charRowRef.current?.querySelector(`[data-character-id="${focusCharacterId}"]`)
+    el?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    setFocusCharacterId(null)
+  }, [focusCharacterId, account])
 
   return (
     <>
@@ -57,7 +68,7 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
           <div className="card-head">
             <h3>{activeRoster.name}</h3>
           </div>
-          <div className="char-row">
+          <div className="char-row" ref={charRowRef}>
             {activeRoster.characters.map(c => (
               <CharacterCard
                 key={c.id}
@@ -83,7 +94,11 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
         placeholder="例如：主远征队"
         onSubmit={value => {
           setAddingRoster(false)
-          void run(() => window.api.accounts.addRoster(account.id, value))
+          void run(() => window.api.accounts.addRoster(account.id, value)).then(next => {
+            // 选中刚建好的远征队，否则新建后子 tab 看起来没变化
+            const created = next?.find(a => a.id === account.id)?.rosters.slice(-1)[0]
+            if (created) setActiveRosterId(created.id)
+          })
         }}
         onCancel={() => setAddingRoster(false)}
       />
@@ -133,7 +148,12 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
         onSubmit={value => {
           const target = activeRoster
           setAddingCharacter(false)
-          if (target) void run(() => window.api.accounts.addCharacter(target.id, value, 0))
+          if (!target) return
+          void run(() => window.api.accounts.addCharacter(target.id, value, 0)).then(next => {
+            const created = next?.find(a => a.id === account.id)
+              ?.rosters.find(r => r.id === target.id)?.characters.slice(-1)[0]
+            if (created) setFocusCharacterId(created.id)
+          })
         }}
         onCancel={() => setAddingCharacter(false)}
       />

@@ -1,6 +1,10 @@
 # loadaily 账号架构 Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **状态：全部 11 个 Task 已实现并验证**（分支 `feature/loadaily-account`）。
+> `npm test` 48/48 通过、`npm run typecheck` 双工程通过、`npm run build` 可产出 portable exe。
+> 下方 `- [x]` 表示该步骤已完成。
+
+> 执行方式：inline（executing-plans）。执行记录（含 4 条 Ruling 与最终 review 修复）见仓库外的 SDD ledger。
 
 **Goal:** 搭起 loadaily 的 Electron 骨架，并实现「账号 → 远征队 → 角色」三级的增删改、持久化与 UI 展示。
 
@@ -61,7 +65,7 @@
 - Consumes: 无（起点）
 - Produces: `createIpcDispatcher(handlers: Record<string, IpcHandler>)` → `{ invoke(channel, ...args): Promise<unknown> }`；`getDataDir(): string`；`makeTrayIcon(size?: number)`、`shouldPreventClose(isQuitting: boolean)`、`setupTray(getWindow)`。
 
-- [ ] **Step 1: 写构建/类型/测试配置**
+- [x] **Step 1: 写构建/类型/测试配置**
 
 `package.json`：
 
@@ -175,12 +179,12 @@ loadaily_Data/
 *.tsbuildinfo
 ```
 
-- [ ] **Step 2: 安装依赖**
+- [x] **Step 2: 安装依赖**
 
 Run: `npm install`
 Expected: 安装成功，生成 `node_modules/` 与 `package-lock.json`。（无网络时需申请提权联网安装。）
 
-- [ ] **Step 3: 写失败测试（IPC 分发器）**
+- [x] **Step 3: 写失败测试（IPC 分发器）**
 
 `src/main/__tests__/ipc.test.ts`：
 
@@ -203,12 +207,12 @@ describe('createIpcDispatcher', () => {
 })
 ```
 
-- [ ] **Step 4: 运行测试确认失败**
+- [x] **Step 4: 运行测试确认失败**
 
 Run: `npm test`
 Expected: FAIL —— 找不到模块 `../ipc`。
 
-- [ ] **Step 5: 实现 IPC 分发器**
+- [x] **Step 5: 实现 IPC 分发器**
 
 `src/main/ipc.ts`：
 
@@ -226,12 +230,12 @@ export function createIpcDispatcher(handlers: Record<string, IpcHandler>) {
 }
 ```
 
-- [ ] **Step 6: 运行测试确认通过**
+- [x] **Step 6: 运行测试确认通过**
 
 Run: `npm test`
 Expected: PASS（2 个用例）。
 
-- [ ] **Step 7: 写最小可运行的主进程 / preload / 渲染层**
+- [x] **Step 7: 写最小可运行的主进程 / preload / 渲染层**
 
 `src/main/dataDir.ts`：
 
@@ -394,17 +398,17 @@ body {
 .app-header { background: var(--header); color: #fff; padding: 8px 14px; font-weight: 600; }
 ```
 
-- [ ] **Step 8: 类型检查**
+- [x] **Step 8: 类型检查**
 
 Run: `npm run typecheck`
 Expected: 两个工程均无错误。
 
-- [ ] **Step 9: 启动冒烟**
+- [x] **Step 9: 启动冒烟**
 
 Run: `npm start`
 Expected: 弹出标题 `loadaily` 的窗口，头部显示 `loadaily`。手动关闭窗口后结束进程。
 
-- [ ] **Step 10: 提交**
+- [x] **Step 10: 提交**
 
 ```bash
 git add loadaily/package.json loadaily/electron.vite.config.ts loadaily/tsconfig.json loadaily/tsconfig.node.json loadaily/tsconfig.web.json loadaily/vitest.config.ts loadaily/electron-builder.yml loadaily/.gitignore loadaily/src
@@ -429,7 +433,7 @@ git commit -m "feat(loadaily): scaffold electron + react + ts project"
   - `renameAccount(tree: Account[], id: string, name: string): Account[]`
   - `removeAccount(tree: Account[], id: string): Account[]`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `src/main/__tests__/accountStore.test.ts`：
 
@@ -484,12 +488,12 @@ describe('accountStore: 账号层', () => {
 })
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: FAIL —— 找不到模块 `../services/accountStore`。
 
-- [ ] **Step 3: 实现账号层**
+- [x] **Step 3: 实现账号层**
 
 `src/main/services/accountStore.ts`：
 
@@ -532,7 +536,7 @@ export function removeAccount(tree: Account[], id: string): Account[] {
 }
 ```
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: PASS（7 个用例）。
@@ -549,7 +553,7 @@ Expected: PASS（7 个用例）。
 - Consumes: Task 2 的 `Account` / `Roster` / `makeId` / `assertName`
 - Produces: `addRoster(tree, accountId, name): Account[]`、`renameRoster(tree, id, name): Account[]`、`removeRoster(tree, id): Account[]`
 
-- [ ] **Step 1: 追加失败测试**
+- [x] **Step 1: 追加失败测试**
 
 在 `accountStore.test.ts` 末尾追加：
 
@@ -604,12 +608,12 @@ import {
 } from '../services/accountStore'
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: FAIL —— `addRoster` 等未导出。
 
-- [ ] **Step 3: 实现远征队层**
+- [x] **Step 3: 实现远征队层**
 
 在 `accountStore.ts` 末尾追加：
 
@@ -650,7 +654,7 @@ export function removeRoster(tree: Account[], id: string): Account[] {
 }
 ```
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: PASS（13 个用例）。
@@ -667,7 +671,7 @@ Expected: PASS（13 个用例）。
 - Consumes: Task 2/3 的 `Account` / `Roster` / `Character` / `makeId` / `assertName`
 - Produces: `assertItemLevel(level: number): number`、`addCharacter(tree, rosterId, name, itemLevel): Account[]`、`updateCharacter(tree, id, patch: { name?: string; itemLevel?: number }): Account[]`、`removeCharacter(tree, id): Account[]`
 
-- [ ] **Step 1: 追加失败测试**
+- [x] **Step 1: 追加失败测试**
 
 在 `accountStore.test.ts` 末尾追加：
 
@@ -739,12 +743,12 @@ import {
 } from '../services/accountStore'
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: FAIL —— `addCharacter` 等未导出。
 
-- [ ] **Step 3: 实现角色层**
+- [x] **Step 3: 实现角色层**
 
 在 `accountStore.ts` 末尾追加：
 
@@ -807,7 +811,7 @@ export function removeCharacter(tree: Account[], id: string): Account[] {
 }
 ```
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run: `npx vitest run src/main/__tests__/accountStore.test.ts`
 Expected: PASS（22 个用例）。
@@ -824,7 +828,7 @@ Expected: PASS（22 个用例）。
 - Consumes: Task 2 的 `Account` 类型
 - Produces: `loadAccounts(file: string): Account[]`、`saveAccounts(file: string, list: Account[]): void`
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `src/main/__tests__/accountsFile.test.ts`：
 
@@ -879,12 +883,12 @@ describe('accountsFile', () => {
 })
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run: `npx vitest run src/main/__tests__/accountsFile.test.ts`
 Expected: FAIL —— 找不到模块 `../services/accountsFile`。
 
-- [ ] **Step 3: 实现持久化**
+- [x] **Step 3: 实现持久化**
 
 `src/main/services/accountsFile.ts`：
 
@@ -916,7 +920,7 @@ export function saveAccounts(file: string, list: Account[]): void {
 }
 ```
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run: `npx vitest run src/main/__tests__/accountsFile.test.ts`
 Expected: PASS（5 个用例）。
@@ -936,7 +940,7 @@ Expected: PASS（5 个用例）。
 
 通道清单（IPC 契约的通道名以此为准）：`account:list`、`account:add`、`account:rename`、`account:remove`、`roster:add`、`roster:rename`、`roster:remove`、`character:add`、`character:update`、`character:remove`。
 
-- [ ] **Step 1: 写失败测试**
+- [x] **Step 1: 写失败测试**
 
 `src/main/__tests__/accountHandlers.test.ts`：
 
@@ -999,12 +1003,12 @@ describe('accountHandlers', () => {
 })
 ```
 
-- [ ] **Step 2: 运行测试确认失败**
+- [x] **Step 2: 运行测试确认失败**
 
 Run: `npx vitest run src/main/__tests__/accountHandlers.test.ts`
 Expected: FAIL —— 找不到模块 `../services/accountHandlers`。
 
-- [ ] **Step 3: 实现 handler 集合**
+- [x] **Step 3: 实现 handler 集合**
 
 `src/main/services/accountHandlers.ts`：
 
@@ -1042,12 +1046,12 @@ export function createAccountHandlers(file: string): Record<string, IpcHandler> 
 }
 ```
 
-- [ ] **Step 4: 运行测试确认通过**
+- [x] **Step 4: 运行测试确认通过**
 
 Run: `npx vitest run src/main/__tests__/accountHandlers.test.ts`
 Expected: PASS（6 个用例）。
 
-- [ ] **Step 5: 装配主进程**
+- [x] **Step 5: 装配主进程**
 
 `src/main/index.ts` 整体替换为：
 
@@ -1111,7 +1115,7 @@ if (!gotLock) {
 }
 ```
 
-- [ ] **Step 6: 类型检查并全量测试**
+- [x] **Step 6: 类型检查并全量测试**
 
 Run: `npm run typecheck && npm test`
 Expected: 类型检查通过；测试全绿（Task 1-6 累计）。
@@ -1128,7 +1132,7 @@ Expected: 类型检查通过；测试全绿（Task 1-6 累计）。
 - Consumes: Task 2 的 `Account` 类型、Task 6 的 10 个通道名
 - Produces: 全局 `window.api.accounts.*`，方法签名见下方 `WindowApi`。
 
-- [ ] **Step 1: 写 preload 实现**
+- [x] **Step 1: 写 preload 实现**
 
 `src/preload/index.ts` 整体替换为：
 
@@ -1156,7 +1160,7 @@ const api = {
 contextBridge.exposeInMainWorld('api', api)
 ```
 
-- [ ] **Step 2: 写类型声明（契约）**
+- [x] **Step 2: 写类型声明（契约）**
 
 `src/preload/index.d.ts`：
 
@@ -1182,12 +1186,12 @@ declare global { interface Window { api: WindowApi } }
 export {}
 ```
 
-- [ ] **Step 3: 类型检查**
+- [x] **Step 3: 类型检查**
 
 Run: `npm run typecheck`
 Expected: 通过（`accountStore.ts` 是纯逻辑，无 Node/Electron 依赖，web 工程也能引用其类型）。
 
-- [ ] **Step 4: 端到端冒烟**
+- [x] **Step 4: 端到端冒烟**
 
 Run: `npm start`
 Expected: 窗口打开。按 `Ctrl+Shift+I` 打开 DevTools，Console 执行：
@@ -1213,7 +1217,7 @@ await window.api.accounts.addAccount('冒烟账号')
   - `ConfirmModal`：`{ open: boolean; title: string; message: string; confirmLabel?: string; onConfirm(): void; onCancel(): void }`
   - `PromptModal`：`{ open: boolean; title: string; label?: string; defaultValue?: string; placeholder?: string; onSubmit(value: string): void; onCancel(): void }`
 
-- [ ] **Step 1: 写 ConfirmModal**
+- [x] **Step 1: 写 ConfirmModal**
 
 `src/renderer/src/components/ConfirmModal.tsx`：
 
@@ -1244,7 +1248,7 @@ export default function ConfirmModal({ open, title, message, confirmLabel = '删
 }
 ```
 
-- [ ] **Step 2: 写 PromptModal**
+- [x] **Step 2: 写 PromptModal**
 
 `src/renderer/src/components/PromptModal.tsx`：
 
@@ -1305,7 +1309,7 @@ export default function PromptModal({ open, title, label, defaultValue = '', pla
 }
 ```
 
-- [ ] **Step 3: 写完整样式表**
+- [x] **Step 3: 写完整样式表**
 
 `src/renderer/src/styles.css` 整体替换为：
 
@@ -1363,7 +1367,7 @@ body {
 .err { color: var(--err); }
 ```
 
-- [ ] **Step 4: 写 App 外壳与账号 CRUD**
+- [x] **Step 4: 写 App 外壳与账号 CRUD**
 
 `src/renderer/src/App.tsx` 整体替换为：
 
@@ -1486,12 +1490,12 @@ export default function App(): JSX.Element {
 }
 ```
 
-- [ ] **Step 5: 类型检查**
+- [x] **Step 5: 类型检查**
 
 Run: `npm run typecheck`
 Expected: 通过。
 
-- [ ] **Step 6: 手动验收**
+- [x] **Step 6: 手动验收**
 
 Run: `npm start`
 Expected:
@@ -1502,7 +1506,7 @@ Expected:
 5. 点「删除」→ 弹出确认框，确认后 tab 消失，选中项自动回退到剩余账号；全删后回到空态。
 6. 重启 App 后数据仍在（`loadaily_Data/accounts.json`）。
 
-- [ ] **Step 7: 提交**
+- [x] **Step 7: 提交**
 
 ```bash
 git add loadaily/src
@@ -1521,7 +1525,7 @@ git commit -m "feat(loadaily): account tree store, ipc contract and account crud
 - Consumes: Task 8 的 `Mutate`、`ConfirmModal`、`PromptModal`；Task 2 的 `Account` / `Roster` 类型
 - Produces: `AccountView`，props `{ account: Account; run: Mutate }`；内部维护 `activeRosterId`，选中项失效时回退到第一个远征队。
 
-- [ ] **Step 1: 写 AccountView**
+- [x] **Step 1: 写 AccountView**
 
 `src/renderer/src/components/AccountView.tsx`：
 
@@ -1634,7 +1638,7 @@ export default function AccountView({ account, run }: AccountViewProps): JSX.Ele
 
 （`removingCharacterId` 在 Task 10 才会被设置；此处先声明好弹窗，避免 Task 10 再改这段。）
 
-- [ ] **Step 2: 在 App 中接入 AccountView**
+- [x] **Step 2: 在 App 中接入 AccountView**
 
 修改 `src/renderer/src/App.tsx`：顶部 import 增加
 
@@ -1658,12 +1662,12 @@ import AccountView from './components/AccountView'
 )}
 ```
 
-- [ ] **Step 3: 类型检查**
+- [x] **Step 3: 类型检查**
 
 Run: `npm run typecheck`
 Expected: 通过。
 
-- [ ] **Step 4: 手动验收**
+- [x] **Step 4: 手动验收**
 
 Run: `npm start`
 Expected:
@@ -1673,7 +1677,7 @@ Expected:
 4. 删除当前远征队 → 确认后子 tab 消失，选中项回退到剩余远征队；全删后显示「该账号还没有远征队…」。
 5. 切换账号再切回 → 子 tab 选择状态跟随账号（因 `key={account.id}` 重挂载）。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add loadaily/src
@@ -1694,7 +1698,7 @@ git commit -m "feat(loadaily): roster sub-tabs with crud"
   - `InlineEdit`：`{ value: string; onSubmit(value: string): void; className?: string; placeholder?: string }`，点击进入编辑，失焦/`Enter` 提交，`Esc` 取消。
   - `CharacterCard`：`{ character: Character; onRename(name: string): void; onItemLevel(itemLevel: number): void; onRemove(): void }`。
 
-- [ ] **Step 1: 写 InlineEdit**
+- [x] **Step 1: 写 InlineEdit**
 
 `src/renderer/src/components/InlineEdit.tsx`：
 
@@ -1757,7 +1761,7 @@ export default function InlineEdit({ value, onSubmit, className, placeholder }: 
 }
 ```
 
-- [ ] **Step 2: 写 CharacterCard**
+- [x] **Step 2: 写 CharacterCard**
 
 `src/renderer/src/components/CharacterCard.tsx`：
 
@@ -1815,7 +1819,7 @@ export default function CharacterCard({ character, onRename, onItemLevel, onRemo
 }
 ```
 
-- [ ] **Step 3: 在 AccountView 中接入角色区**
+- [x] **Step 3: 在 AccountView 中接入角色区**
 
 在 `src/renderer/src/components/AccountView.tsx` 顶部 import 增加：
 
@@ -1867,12 +1871,12 @@ const [addingCharacter, setAddingCharacter] = useState(false)
 
 > 说明：新增角色只填名字，装备等级默认 `0`，随后在卡片上编辑（符合 spec 的「默认 0」）。
 
-- [ ] **Step 4: 类型检查**
+- [x] **Step 4: 类型检查**
 
 Run: `npm run typecheck`
 Expected: 通过。
 
-- [ ] **Step 5: 手动验收**
+- [x] **Step 5: 手动验收**
 
 Run: `npm start`
 Expected:
@@ -1883,12 +1887,12 @@ Expected:
 5. 删除角色 → 确认后卡片消失。
 6. 角色多到超过宽度时出现横向滚动条，不换行。
 
-- [ ] **Step 6: 全量测试与类型检查**
+- [x] **Step 6: 全量测试与类型检查**
 
 Run: `npm test && npm run typecheck`
 Expected: 测试全绿、类型检查通过。
 
-- [ ] **Step 7: 提交**
+- [x] **Step 7: 提交**
 
 ```bash
 git add loadaily/src
@@ -1906,7 +1910,7 @@ git commit -m "feat(loadaily): horizontal character cards with inline editing"
 - Consumes: 前面所有任务的成品
 - Produces: 无代码接口（仅文档）
 
-- [ ] **Step 1: 写 README**
+- [x] **Step 1: 写 README**
 
 `README.md`：
 
@@ -1942,7 +1946,7 @@ docs/superpowers/    设计 spec 与实现计划
 ```
 ```
 
-- [ ] **Step 2: 写 CLAUDE.md**
+- [x] **Step 2: 写 CLAUDE.md**
 
 `CLAUDE.md`：
 
@@ -1982,17 +1986,17 @@ loadaily 是《失落方舟》国服的日常/周常管理桌面工具。Electro
 - 删除确认一律走自定义弹窗。
 ```
 
-- [ ] **Step 3: 全量验证**
+- [x] **Step 3: 全量验证**
 
 Run: `npm test && npm run typecheck`
 Expected: 全绿 / 通过。
 
-- [ ] **Step 4: 打包校验（有网络时）**
+- [x] **Step 4: 打包校验（有网络时）**
 
 Run: `npm run build`
 Expected: 产出 portable exe。若因网络无法下载 electron-builder 依赖而失败，记录该情况并跳过，不要改动构建配置来绕过。
 
-- [ ] **Step 5: 提交**
+- [x] **Step 5: 提交**
 
 ```bash
 git add loadaily/README.md loadaily/CLAUDE.md

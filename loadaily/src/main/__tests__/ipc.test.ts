@@ -13,4 +13,10 @@ describe('createIpcDispatcher', () => {
     const d = createIpcDispatcher({})
     await expect(d.invoke('nope')).rejects.toThrow('未知 IPC channel: nope')
   })
+
+  it('原型链上的属性名也算未知通道', async () => {
+    const d = createIpcDispatcher({})
+    await expect(d.invoke('constructor')).rejects.toThrow('未知 IPC channel: constructor')
+    await expect(d.invoke('toString')).rejects.toThrow('未知 IPC channel: toString')
+  })
 })
